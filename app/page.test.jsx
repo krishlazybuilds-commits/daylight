@@ -106,4 +106,32 @@ describe("authenticated app", () => {
     expect(screen.getByText("Buy milk")).toBeInTheDocument();
     expect(screen.queryByText("Walk the dog")).not.toBeInTheDocument();
   });
+
+  it("greets with Good morning during morning hours", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date("2026-09-07T09:00:00"));
+    mockAuthenticated();
+    render(h(Home));
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(/^Good morning,/);
+    vi.useRealTimers();
+  });
+
+  it("greets with Good afternoon during afternoon hours", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date("2026-09-07T14:00:00"));
+    mockAuthenticated();
+    render(h(Home));
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(/^Good afternoon,/);
+    vi.useRealTimers();
+  });
+
+  it("greets with Good evening during evening and night hours", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date("2026-09-07T20:00:00"));
+    mockAuthenticated();
+    render(h(Home));
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(/^Good evening,/);
+    vi.useRealTimers();
+  });
 });
+
